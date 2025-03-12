@@ -1,0 +1,39 @@
+import { View } from "react-native";
+import { Button, Text, useTheme } from "react-native-paper";
+import ContentGradient from "../layout/content-gradient";
+import { MapView, MapViewRef } from "@maplibre/maplibre-react-native";
+import { useRef } from "react";
+
+export default function MapScreen() {
+  const theme = useTheme();
+  const mapRef = useRef<MapViewRef>(null);
+
+  return (
+    <ContentGradient>
+      <View
+        style={{
+          backgroundColor: theme.colors.background,
+          flex: 1,
+          position: "relative",
+        }}
+      >
+        <Button
+          mode="contained"
+          style={{ position: "absolute", top: 50, zIndex: 2 }}
+          onPress={async () => {
+            console.log(await mapRef.current?.getCenter());
+          }}
+        >
+          lol
+        </Button>
+        <MapView
+          ref={mapRef}
+          style={{ flex: 1 }}
+          compassViewMargins={{ x: 10, y: 25 }}
+          mapStyle={`https://api.maptiler.com/maps/streets-v2-dark/style.json?key=${process.env.EXPO_PUBLIC_MAPTILER_API_KEY}`}
+          onUserLocationUpdate={(data) => console.log(data)}
+        ></MapView>
+      </View>
+    </ContentGradient>
+  );
+}
