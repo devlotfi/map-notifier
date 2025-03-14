@@ -33,5 +33,16 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   web: {
     favicon: "./icons/favicon.png",
   },
-  plugins: ["@maplibre/maplibre-react-native"],
+  plugins: [
+    "@maplibre/maplibre-react-native",
+    [
+      "expo-location",
+      {
+        locationAlwaysAndWhenInUsePermission:
+          "Allow $(PRODUCT_NAME) to use your location.",
+        isIosBackgroundLocationEnabled: true,
+        isAndroidBackgroundLocationEnabled: true,
+      },
+    ],
+  ],
 });

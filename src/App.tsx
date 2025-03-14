@@ -18,6 +18,7 @@ import MapScreen from "./screens/map-screen";
 import SettingsScreen from "./screens/settings-screen";
 import { KeyboardProvider } from "./context/keyboard-context";
 import Navbar from "./components/navbar";
+import { PermissionProvider } from "./context/permission-context";
 
 const BottomTabs = createBottomTabNavigator();
 
@@ -25,80 +26,85 @@ function BottomTabsComponent() {
   const theme = useTheme();
 
   return (
-    <BottomTabs.Navigator
-      screenOptions={{
-        header: () => {
-          return <Navbar></Navbar>;
-        },
-      }}
-      tabBar={({ navigation, state, descriptors, insets }) => (
-        <BottomNavigation.Bar
-          style={{
-            backgroundColor: theme.colors.surface,
-          }}
-          activeIndicatorStyle={{
-            backgroundColor: theme.colors.primary,
-          }}
-          navigationState={state}
-          safeAreaInsets={insets}
-          onTabPress={({ route, preventDefault }) => {
-            const event = navigation.emit({
-              type: "tabPress",
-              target: route.key,
-              canPreventDefault: true,
-            });
-
-            if (event.defaultPrevented) {
-              preventDefault();
-            } else {
-              navigation.dispatch({
-                ...CommonActions.navigate(route.name, route.params),
-                target: state.key,
+    <PermissionProvider>
+      <BottomTabs.Navigator
+        screenOptions={{
+          animation: "shift",
+          header: () => {
+            return <Navbar></Navbar>;
+          },
+        }}
+        tabBar={({ navigation, state, descriptors, insets }) => (
+          <BottomNavigation.Bar
+            style={{
+              backgroundColor: theme.colors.surface,
+            }}
+            activeIndicatorStyle={{
+              backgroundColor: theme.colors.primary,
+            }}
+            navigationState={state}
+            safeAreaInsets={insets}
+            onTabPress={({ route, preventDefault }) => {
+              const event = navigation.emit({
+                type: "tabPress",
+                target: route.key,
+                canPreventDefault: true,
               });
-            }
-          }}
-          renderIcon={({ route, focused, color }) => {
-            const { options } = descriptors[route.key];
-            if (options.tabBarIcon) {
-              return options.tabBarIcon({ focused, color, size: 22 });
-            }
 
-            return null;
-          }}
-          getLabelText={({ route }) => {
-            const { options } = descriptors[route.key];
-            return options.tabBarLabel as string;
+              if (event.defaultPrevented) {
+                preventDefault();
+              } else {
+                navigation.dispatch({
+                  ...CommonActions.navigate(route.name, route.params),
+                  target: state.key,
+                });
+              }
+            }}
+            renderIcon={({ route, focused, color }) => {
+              const { options } = descriptors[route.key];
+              if (options.tabBarIcon) {
+                return options.tabBarIcon({ focused, color, size: 22 });
+              }
+
+              return null;
+            }}
+            getLabelText={({ route }) => {
+              const { options } = descriptors[route.key];
+              return options.tabBarLabel as string;
+            }}
+          />
+        )}
+      >
+        <BottomTabs.Screen
+          name="Map"
+          component={MapScreen}
+          options={{
+            tabBarLabel: "Map",
+            tabBarIcon: ({ color, size }) => {
+              return (
+                <FontAwesomeIcon
+                  icon={faMapMarkedAlt}
+                  size={size}
+                  color={color}
+                />
+              );
+            },
           }}
         />
-      )}
-    >
-      <BottomTabs.Screen
-        name="Map"
-        component={MapScreen}
-        options={{
-          tabBarLabel: "Map",
-          tabBarIcon: ({ color, size }) => {
-            return (
-              <FontAwesomeIcon
-                icon={faMapMarkedAlt}
-                size={size}
-                color={color}
-              />
-            );
-          },
-        }}
-      />
-      <BottomTabs.Screen
-        name="Settings"
-        component={SettingsScreen}
-        options={{
-          tabBarLabel: "Settings",
-          tabBarIcon: ({ color, size }) => {
-            return <FontAwesomeIcon icon={faGear} size={size} color={color} />;
-          },
-        }}
-      />
-    </BottomTabs.Navigator>
+        <BottomTabs.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{
+            tabBarLabel: "Settings",
+            tabBarIcon: ({ color, size }) => {
+              return (
+                <FontAwesomeIcon icon={faGear} size={size} color={color} />
+              );
+            },
+          }}
+        />
+      </BottomTabs.Navigator>
+    </PermissionProvider>
   );
 }
 

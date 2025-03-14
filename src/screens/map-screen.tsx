@@ -1,12 +1,23 @@
 import { View } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import ContentGradient from "../layout/content-gradient";
-import { MapView, MapViewRef } from "@maplibre/maplibre-react-native";
-import { useRef } from "react";
+import {
+  MapView,
+  MapViewRef,
+  UserLocationRef,
+} from "@maplibre/maplibre-react-native";
+import { useEffect, useRef, useState } from "react";
+import * as Location from "expo-location";
+import * as TaskManager from "expo-task-manager";
+import { Tasks } from "../constants";
 
 export default function MapScreen() {
   const theme = useTheme();
   const mapRef = useRef<MapViewRef>(null);
+  const locationRef = useRef<UserLocationRef>(null);
+  const [location, setLocation] = useState<Location.LocationObject | null>(
+    null
+  );
 
   return (
     <ContentGradient>
@@ -22,6 +33,9 @@ export default function MapScreen() {
           style={{ position: "absolute", top: 50, zIndex: 2 }}
           onPress={async () => {
             console.log(await mapRef.current?.getCenter());
+            await locationRef.current?.setLocationManager({
+              running: true,
+            });
           }}
         >
           lol
