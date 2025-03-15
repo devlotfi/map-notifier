@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { useColorScheme } from "react-native";
+import { AppState, useColorScheme } from "react-native";
 import {
   BottomNavigation,
   PaperProvider,
@@ -19,6 +19,7 @@ import SettingsScreen from "./screens/settings-screen";
 import { KeyboardProvider } from "./context/keyboard-context";
 import Navbar from "./components/navbar";
 import { PermissionProvider } from "./context/permission-context";
+import * as TaskManager from "expo-task-manager";
 
 const BottomTabs = createBottomTabNavigator();
 
@@ -150,3 +151,11 @@ export default function Providers() {
     </PaperProvider>
   );
 }
+
+AppState.addEventListener("change", async (nextAppState) => {
+  if (nextAppState === "inactive") {
+    console.log("clear tasks");
+
+    await TaskManager.unregisterAllTasksAsync();
+  }
+});

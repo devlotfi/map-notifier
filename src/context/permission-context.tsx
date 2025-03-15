@@ -25,13 +25,6 @@ async function getPermission(): Promise<boolean> {
       const { status: backgroundStatus } =
         await Location.requestBackgroundPermissionsAsync();
       if (backgroundStatus === "granted") {
-        try {
-          await Location.stopLocationUpdatesAsync(Tasks.LOCATION);
-        } catch {}
-        await Location.startLocationUpdatesAsync(Tasks.LOCATION, {
-          accuracy: Location.Accuracy.BestForNavigation,
-          timeInterval: 1000,
-        });
         return true;
       }
     }
@@ -45,14 +38,36 @@ async function getPermission(): Promise<boolean> {
 
 export function PermissionProvider({ children }: PropsWithChildren) {
   const theme = useTheme();
-  const [locationEnabled, setLocationEnabled] = useState<boolean>(false);
+  const [locationEnabled, setLocationEnabled] = useState<boolean>(true);
 
   useEffect(() => {
     (async () => {
-      const result = await getPermission();
-      console.log(result);
-      setLocationEnabled(result);
+      const { status: foregroundStatus } =
+        await Location.requestForegroundPermissionsAsync();
+      if (foregroundStatus === "granted") {
+        const { status: backgroundStatus } =
+          await Location.requestBackgroundPermissionsAsync();
+        if (backgroundStatus === "granted") {
+          await Location.startLocationUpdatesAsync(Tasks.LOCATION, {
+            accuracy: Location.LocationAccuracy.BestForNavigation,
+            distanceInterval: 0.1, // Update every 10 meters
+            foregroundService: {
+              notificationTitle: "Location Tracking Active",
+              notificationBody:
+                "Your location is being tracked in the background.",
+              notificationColor: "#FF5733",
+              killServiceOnDestroy: true,
+            },
+          });
+        }
+      }
     })();
+
+    return () => {
+      (async () => {
+        await Location.stopLocationUpdatesAsync(Tasks.LOCATION);
+      })();
+    };
   }, []);
 
   if (!locationEnabled) {
@@ -82,7 +97,7 @@ TaskManager.defineTask(Tasks.LOCATION, async ({ data, error }) => {
     return;
   }
   if (data) {
-    console.log(data, "task");
+    console.log(data["locations"][0], "task");
 
     // do something with the locations captured in the background
   }
