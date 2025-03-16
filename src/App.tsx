@@ -20,6 +20,32 @@ import { KeyboardProvider } from "./context/keyboard-context";
 import Navbar from "./components/navbar";
 import { PermissionProvider } from "./context/permission-context";
 import * as TaskManager from "expo-task-manager";
+import * as Notifications from "expo-notifications";
+
+async function initialConfig() {
+  AppState.addEventListener("change", async (nextAppState) => {
+    if (nextAppState === "inactive") {
+      console.log("clear tasks");
+
+      await TaskManager.unregisterAllTasksAsync();
+    }
+  });
+
+  await Notifications.setNotificationChannelAsync("MapNotifications", {
+    name: "Map Notifications",
+    importance: Notifications.AndroidImportance.HIGH,
+    sound: "alarm.wav",
+  });
+
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+    }),
+  });
+}
+initialConfig();
 
 const BottomTabs = createBottomTabNavigator();
 
@@ -151,11 +177,3 @@ export default function Providers() {
     </PaperProvider>
   );
 }
-
-AppState.addEventListener("change", async (nextAppState) => {
-  if (nextAppState === "inactive") {
-    console.log("clear tasks");
-
-    await TaskManager.unregisterAllTasksAsync();
-  }
-});

@@ -44,5 +44,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         isAndroidBackgroundLocationEnabled: true,
       },
     ],
+    [
+      "expo-notifications",
+      {
+        sounds: ["./src/assets/alarm.wav"],
+      },
+    ],
   ],
 });

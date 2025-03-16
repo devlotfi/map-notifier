@@ -9,12 +9,21 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootNativeStackParamList } from "../navigation-types";
 import { useNavigation } from "@react-navigation/native";
 import ContentGradient from "../layout/content-gradient";
+import * as IntentLauncher from "expo-intent-launcher";
+import { useEffect } from "react";
+import * as Notifications from "expo-notifications";
 
 type Props = NativeStackScreenProps<RootNativeStackParamList, "Start">;
 
 export default function StartScreen() {
   const theme = useTheme();
   const navigation = useNavigation<Props["navigation"]>();
+
+  useEffect(() => {
+    (async () => {
+      await Notifications.requestPermissionsAsync();
+    })();
+  }, []);
 
   return (
     <View style={{ backgroundColor: theme.colors.background, flex: 1 }}>
@@ -49,6 +58,24 @@ export default function StartScreen() {
       </ContentGradient>
 
       <View style={{ backgroundColor: theme.colors.surface, padding: 20 }}>
+        <Button
+          mode="contained"
+          icon={({ color, size }) => (
+            <FontAwesomeIcon
+              icon={faMapMarkerAlt}
+              color={color}
+              size={size}
+            ></FontAwesomeIcon>
+          )}
+          contentStyle={{ padding: 7 }}
+          onPress={() =>
+            IntentLauncher.startActivityAsync(
+              IntentLauncher.ActivityAction.IGNORE_BATTERY_OPTIMIZATION_SETTINGS
+            )
+          }
+        >
+          Start
+        </Button>
         <Button
           mode="contained"
           icon={({ color, size }) => (

@@ -4,6 +4,7 @@ import { ActivityIndicator, useTheme } from "react-native-paper";
 import * as Location from "expo-location";
 import { Tasks } from "../constants";
 import * as TaskManager from "expo-task-manager";
+import * as Notifications from "expo-notifications";
 
 interface PermissionContext {
   locationEnabled: boolean;
@@ -89,6 +90,8 @@ export function PermissionProvider({ children }: PropsWithChildren) {
   );
 }
 
+let count = 0;
+
 TaskManager.defineTask(Tasks.LOCATION, async ({ data, error }) => {
   if (error) {
     // Error occurred - check `error.message` for more details.
@@ -97,6 +100,22 @@ TaskManager.defineTask(Tasks.LOCATION, async ({ data, error }) => {
     return;
   }
   if (data) {
+    console.log(count);
+
+    if (count === 5) {
+      Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Look at that notification",
+          body: "I'm so proud of myself!",
+          sound: "alarm.wav",
+        },
+        trigger: {
+          seconds: 5,
+          channelId: "MapNotifications",
+        },
+      });
+    }
+    count++;
     console.log(data["locations"][0], "task");
 
     // do something with the locations captured in the background
