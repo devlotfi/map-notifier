@@ -12,10 +12,7 @@ import { MapType } from "../types/map-type";
 import AlarmSound from "../components/alarm-sound";
 import { Alarms } from "../types/alarms";
 import { AVPlaybackSource } from "expo-av";
-
-const chiptune: AVPlaybackSource = require("../assets/audio/chiptune.wav");
-const morningjoy: AVPlaybackSource = require("../assets/audio/morningjoy.wav");
-const oversimplified: AVPlaybackSource = require("../assets/audio/oversimplified.wav");
+import { AlarmSources } from "../types/alarm-sources";
 
 export default function SettingsScreen() {
   const theme = useTheme();
@@ -85,20 +82,14 @@ export default function SettingsScreen() {
         </View>
 
         <View style={{ gap: 10, paddingBottom: 100 }}>
-          <AlarmSound
-            name="Chiptune"
-            alarm={Alarms.CHIPTUNE}
-            alarmSrc={chiptune}
-          ></AlarmSound>
+          <AlarmSound name="Chiptune" alarm={Alarms.CHIPTUNE}></AlarmSound>
           <AlarmSound
             name="Morning Joy"
             alarm={Alarms.MORNING_JOY}
-            alarmSrc={morningjoy}
           ></AlarmSound>
           <AlarmSound
             name="Oversimplified"
             alarm={Alarms.OVERSIMPLIFIED}
-            alarmSrc={oversimplified}
           ></AlarmSound>
         </View>
       </ScrollView>

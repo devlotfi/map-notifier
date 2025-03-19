@@ -1,20 +1,22 @@
-import { faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { View } from "react-native";
 import { Card, IconButton, Text, useTheme } from "react-native-paper";
 import { Alarms } from "../types/alarms";
-import { useEffect, useState } from "react";
-import { Audio, AVPlaybackSource } from "expo-av";
+import { useContext, useEffect, useState } from "react";
+import { Audio } from "expo-av";
 import { useMutation } from "@tanstack/react-query";
+import { AlarmSources } from "../types/alarm-sources";
+import { MapContext } from "../context/map-context";
 
 interface Props {
   name: string;
   alarm: Alarms;
-  alarmSrc: AVPlaybackSource;
 }
 
-export default function AlarmSound({ name, alarm, alarmSrc }: Props) {
+export default function AlarmSound({ name, alarm }: Props) {
   const theme = useTheme();
+  const { alarmSound, setAlarmSound } = useContext(MapContext);
   const [sound, setSound] = useState<Audio.Sound | null>(null);
 
   const { mutate, isPending } = useMutation({
@@ -24,7 +26,7 @@ export default function AlarmSound({ name, alarm, alarmSrc }: Props) {
         await sound.unloadAsync();
         setSound(null);
       } else {
-        const { sound } = await Audio.Sound.createAsync(alarmSrc);
+        const { sound } = await Audio.Sound.createAsync(AlarmSources[alarm]);
         sound.setOnPlaybackStatusUpdate(async (status) => {
           if (status.isLoaded && status.didJustFinish) {
             await sound.stopAsync();
@@ -48,9 +50,43 @@ export default function AlarmSound({ name, alarm, alarmSrc }: Props) {
 
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-      <Card mode="outlined" style={{ borderRadius: 15, flex: 1 }}>
-        <Card.Content style={{ height: 60, justifyContent: "center" }}>
-          <Text style={{ fontSize: 17 }}>{name}</Text>
+      <Card
+        mode="outlined"
+        style={{
+          borderRadius: 15,
+          flex: 1,
+          borderColor:
+            alarm === alarmSound ? theme.colors.primary : theme.colors.outline,
+        }}
+        onPress={() => setAlarmSound(alarm)}
+      >
+        <Card.Content
+          style={{
+            height: 60,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 17,
+              color:
+                alarm === alarmSound
+                  ? theme.colors.primary
+                  : theme.colors.onBackground,
+            }}
+          >
+            {name}
+          </Text>
+
+          {alarm === alarmSound ? (
+            <FontAwesomeIcon
+              icon={faCheck}
+              color={theme.colors.primary}
+              size={23}
+            ></FontAwesomeIcon>
+          ) : null}
         </Card.Content>
       </Card>
 

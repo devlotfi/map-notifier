@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { AppState, useColorScheme } from "react-native";
+import { AppState, useColorScheme, View } from "react-native";
 import { BottomNavigation, PaperProvider, useTheme } from "react-native-paper";
 import { CommonActions, NavigationContainer } from "@react-navigation/native";
 import { RootNativeStackParamList } from "./types/navigation-types";
@@ -22,7 +22,7 @@ import BackgroundLocationPermissionScreen from "./screens/background-location-pe
 import NotificationsPermissionScreen from "./screens/notifications-permission-screen";
 import IgnoreBatteryOptimizationsPermissionScreen from "./screens/ignore-battery-optimizations-permission-screen";
 import { useEffect } from "react";
-import { Alarms } from "./types/alarms";
+import * as SystemUI from "expo-system-ui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NotificationChannels } from "./types/notification-channels";
 import { MapProvider } from "./context/map-context";
@@ -58,87 +58,89 @@ function BottomTabsComponent() {
   const theme = useTheme();
 
   return (
-    <LocationProvider>
-      <MapProvider>
-        <BottomTabs.Navigator
-          screenOptions={{
-            animation: "shift",
-            header: () => {
-              return <Navbar></Navbar>;
-            },
-          }}
-          tabBar={({ navigation, state, descriptors, insets }) => (
-            <BottomNavigation.Bar
-              style={{
-                backgroundColor: theme.colors.surface,
-              }}
-              activeIndicatorStyle={{
-                backgroundColor: theme.colors.primary,
-              }}
-              navigationState={state}
-              safeAreaInsets={insets}
-              onTabPress={({ route, preventDefault }) => {
-                const event = navigation.emit({
-                  type: "tabPress",
-                  target: route.key,
-                  canPreventDefault: true,
-                });
-
-                if (event.defaultPrevented) {
-                  preventDefault();
-                } else {
-                  navigation.dispatch({
-                    ...CommonActions.navigate(route.name, route.params),
-                    target: state.key,
+    <View style={{ backgroundColor: theme.colors.background, flex: 1 }}>
+      <LocationProvider>
+        <MapProvider>
+          <BottomTabs.Navigator
+            screenOptions={{
+              animation: "shift",
+              header: () => {
+                return <Navbar></Navbar>;
+              },
+            }}
+            tabBar={({ navigation, state, descriptors, insets }) => (
+              <BottomNavigation.Bar
+                style={{
+                  backgroundColor: theme.colors.surface,
+                }}
+                activeIndicatorStyle={{
+                  backgroundColor: theme.colors.primary,
+                }}
+                navigationState={state}
+                safeAreaInsets={insets}
+                onTabPress={({ route, preventDefault }) => {
+                  const event = navigation.emit({
+                    type: "tabPress",
+                    target: route.key,
+                    canPreventDefault: true,
                   });
-                }
-              }}
-              renderIcon={({ route, focused, color }) => {
-                const { options } = descriptors[route.key];
-                if (options.tabBarIcon) {
-                  return options.tabBarIcon({ focused, color, size: 22 });
-                }
 
-                return null;
-              }}
-              getLabelText={({ route }) => {
-                const { options } = descriptors[route.key];
-                return options.tabBarLabel as string;
+                  if (event.defaultPrevented) {
+                    preventDefault();
+                  } else {
+                    navigation.dispatch({
+                      ...CommonActions.navigate(route.name, route.params),
+                      target: state.key,
+                    });
+                  }
+                }}
+                renderIcon={({ route, focused, color }) => {
+                  const { options } = descriptors[route.key];
+                  if (options.tabBarIcon) {
+                    return options.tabBarIcon({ focused, color, size: 22 });
+                  }
+
+                  return null;
+                }}
+                getLabelText={({ route }) => {
+                  const { options } = descriptors[route.key];
+                  return options.tabBarLabel as string;
+                }}
+              />
+            )}
+          >
+            <BottomTabs.Screen
+              name="Map"
+              component={MapScreen}
+              options={{
+                tabBarLabel: "Map",
+                tabBarIcon: ({ color, size }) => {
+                  return (
+                    <FontAwesomeIcon
+                      icon={faMapMarkedAlt}
+                      size={size}
+                      color={color}
+                    />
+                  );
+                },
               }}
             />
-          )}
-        >
-          <BottomTabs.Screen
-            name="Map"
-            component={MapScreen}
-            options={{
-              tabBarLabel: "Map",
-              tabBarIcon: ({ color, size }) => {
-                return (
-                  <FontAwesomeIcon
-                    icon={faMapMarkedAlt}
-                    size={size}
-                    color={color}
-                  />
-                );
-              },
-            }}
-          />
-          <BottomTabs.Screen
-            name="Settings"
-            component={SettingsScreen}
-            options={{
-              tabBarLabel: "Settings",
-              tabBarIcon: ({ color, size }) => {
-                return (
-                  <FontAwesomeIcon icon={faGear} size={size} color={color} />
-                );
-              },
-            }}
-          />
-        </BottomTabs.Navigator>
-      </MapProvider>
-    </LocationProvider>
+            <BottomTabs.Screen
+              name="Settings"
+              component={SettingsScreen}
+              options={{
+                tabBarLabel: "Settings",
+                tabBarIcon: ({ color, size }) => {
+                  return (
+                    <FontAwesomeIcon icon={faGear} size={size} color={color} />
+                  );
+                },
+              }}
+            />
+          </BottomTabs.Navigator>
+        </MapProvider>
+      </LocationProvider>
+    </View>
   );
 }
 
@@ -185,6 +187,7 @@ function App() {
   useEffect(() => {
     (async () => {
       await NavigationBar.setBackgroundColorAsync(theme.colors.surface);
+      await SystemUI.setBackgroundColorAsync(theme.colors.background);
     })();
   }, [theme]);
 
