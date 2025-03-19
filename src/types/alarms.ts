@@ -1,5 +1,5 @@
 export enum Alarms {
-  CHIPTUNE = "chiptune.wav",
-  MORNING_JOY = "morningjoy.wav",
-  OVERSIMPLIFIED = "oversimplified.wav",
+  CHIPTUNE = "CHIPTUNE",
+  MORNING_JOY = "MORNING_JOY",
+  OVERSIMPLIFIED = "OVERSIMPLIFIED",
 }

@@ -18,12 +18,15 @@ import {
   faPerson,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
+import { MapContext } from "../context/map-context";
+import { MapType } from "../types/map-type";
 
 export default function MapScreen() {
   const theme = useTheme();
   const mapRef = useRef<MapViewRef>(null);
   const locationRef = useRef<UserLocationRef>(null);
   const { location } = useContext(LocationContext);
+  const { mapType } = useContext(MapContext);
 
   return (
     <ContentGradient>
@@ -50,7 +53,13 @@ export default function MapScreen() {
           ref={mapRef}
           style={{ flex: 1 }}
           compassViewMargins={{ x: 10, y: 25 }}
-          mapStyle={`https://api.maptiler.com/maps/satellite/style.json?key=${process.env.EXPO_PUBLIC_MAPTILER_API_KEY}`}
+          mapStyle={`https://api.maptiler.com/maps/${
+            mapType === MapType.SATELLITE
+              ? "satellite"
+              : theme.dark
+              ? "streets-v2-dark"
+              : "streets-v2"
+          }/style.json?key=${process.env.EXPO_PUBLIC_MAPTILER_API_KEY}`}
           onUserLocationUpdate={(data) => console.log(data)}
         >
           {location ? (
