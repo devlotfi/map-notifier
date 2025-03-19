@@ -35,6 +35,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   plugins: [
     "@maplibre/maplibre-react-native",
+    "expo-av",
+    "expo-notifications",
     [
       "expo-location",
       {
@@ -42,12 +44,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           "Allow $(PRODUCT_NAME) to use your location.",
         isIosBackgroundLocationEnabled: true,
         isAndroidBackgroundLocationEnabled: true,
-      },
-    ],
-    [
-      "expo-notifications",
-      {
-        sounds: ["./src/assets/alarm.wav"],
       },
     ],
   ],

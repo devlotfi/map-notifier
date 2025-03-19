@@ -1,3 +1,4 @@
+import { Image, ImageBackground } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { PropsWithChildren } from "react";
 import { View } from "react-native";
@@ -15,18 +16,20 @@ export default function ContentGradient({ children }: PropsWithChildren) {
           width: "100%",
           position: "absolute",
           top: 0,
-          zIndex: 1,
+          zIndex: 2,
         }}
         pointerEvents="none"
       ></LinearGradient>
 
-      <View
-        style={{
-          flex: 1,
+      <ImageBackground
+        source={require("../assets/img/map-bg.png")}
+        style={{ flex: 1 }}
+        imageStyle={{
+          opacity: theme.dark ? 0.2 : 0.05,
         }}
       >
         {children}
-      </View>
+      </ImageBackground>
 
       <LinearGradient
         colors={["transparent", theme.colors.surface]}
@@ -35,7 +38,7 @@ export default function ContentGradient({ children }: PropsWithChildren) {
           width: "100%",
           position: "absolute",
           bottom: 0,
-          zIndex: 1,
+          zIndex: 2,
         }}
         pointerEvents="none"
       ></LinearGradient>

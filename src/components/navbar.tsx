@@ -17,7 +17,7 @@ export default function Navbar() {
       }}
     >
       <Image
-        source={require("../assets/logo.png")}
+        source={require("../assets/img/logo.png")}
         style={{ height: 35, width: 35 }}
         contentFit="contain"
       ></Image>

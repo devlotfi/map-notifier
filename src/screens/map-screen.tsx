@@ -4,20 +4,26 @@ import ContentGradient from "../layout/content-gradient";
 import {
   MapView,
   MapViewRef,
+  MarkerView,
   UserLocationRef,
 } from "@maplibre/maplibre-react-native";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
-import { Tasks } from "../constants";
+import { Tasks } from "../types/tasks";
+import { LocationContext } from "../context/location-context";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import {
+  faLocationCrosshairs,
+  faPerson,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default function MapScreen() {
   const theme = useTheme();
   const mapRef = useRef<MapViewRef>(null);
   const locationRef = useRef<UserLocationRef>(null);
-  const [location, setLocation] = useState<Location.LocationObject | null>(
-    null
-  );
+  const { location } = useContext(LocationContext);
 
   return (
     <ContentGradient>
@@ -44,9 +50,33 @@ export default function MapScreen() {
           ref={mapRef}
           style={{ flex: 1 }}
           compassViewMargins={{ x: 10, y: 25 }}
-          mapStyle={`https://api.maptiler.com/maps/streets-v2-dark/style.json?key=${process.env.EXPO_PUBLIC_MAPTILER_API_KEY}`}
+          mapStyle={`https://api.maptiler.com/maps/satellite/style.json?key=${process.env.EXPO_PUBLIC_MAPTILER_API_KEY}`}
           onUserLocationUpdate={(data) => console.log(data)}
-        ></MapView>
+        >
+          {location ? (
+            <MarkerView
+              coordinate={[location.coords.longitude, location.coords.latitude]}
+              anchor={{
+                x: 0.5,
+                y: 1,
+              }}
+            >
+              <FontAwesomeIcon
+                icon={faPerson}
+                color={theme.colors.primary}
+                size={50}
+              ></FontAwesomeIcon>
+            </MarkerView>
+          ) : null}
+
+          <MarkerView coordinate={[0, 0]}>
+            <FontAwesomeIcon
+              icon={faLocationCrosshairs}
+              color={theme.colors.primary}
+              size={35}
+            ></FontAwesomeIcon>
+          </MarkerView>
+        </MapView>
       </View>
     </ContentGradient>
   );
