@@ -2,7 +2,7 @@
 
 # 📜 aspnet-chat
 
-A simple chat app built with React Native (Expo) and ASP.NET
+An app that will trigger an alarm when reaching a user defined geographical area
 
 # 📌 Contents
 
