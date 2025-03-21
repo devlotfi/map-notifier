@@ -30,27 +30,22 @@ Some illustration made by [Freepik](https://www.freepik.com/)
 
 ## Requirements
 
-- .NET Core
 - Node JS
 - pnpm
+- Android Studio
 
 ## Install
 
 ```bash
-# In mobile folder
 $ pnpm i
 ```
 
 ## Development
 
-First have to configure the appsettings in the server folder based on the template
+First have to configure env vars
 
 ```bash
-# Run in mobile folder
-$ pnpm run start
-
-# Run in server folder
-$ dotnet watch
+$ pnpm expo run:android
 ```
 
 # 📷 Preview
