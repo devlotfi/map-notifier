@@ -16,22 +16,32 @@ import Navbar from "./components/navbar";
 import * as TaskManager from "expo-task-manager";
 import * as Notifications from "expo-notifications";
 import * as NavigationBar from "expo-navigation-bar";
-import { LocationProvider } from "./context/location-context";
 import ForegroundLocationPermissionScreen from "./screens/foreground-location-permission-screen";
 import BackgroundLocationPermissionScreen from "./screens/background-location-permission-screen";
 import NotificationsPermissionScreen from "./screens/notifications-permission-screen";
 import IgnoreBatteryOptimizationsPermissionScreen from "./screens/ignore-battery-optimizations-permission-screen";
 import { useEffect } from "react";
 import * as SystemUI from "expo-system-ui";
+import * as Location from "expo-location";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NotificationChannels } from "./types/notification-channels";
 import { MapProvider } from "./context/map-context";
+import { Audio } from "expo-av";
+import { Tasks } from "./types/tasks";
+import ArrivalModal from "./components/arrival-modal";
+import VolumeConfigScreen from "./screens/volume-config-screen";
+import EnableLocationServicesScreen from "./screens/enable-location-services-screen";
 
 async function initialConfig() {
   AppState.addEventListener("change", async (nextAppState) => {
     if (nextAppState === "inactive") {
       await TaskManager.unregisterAllTasksAsync();
+      await Location.stopLocationUpdatesAsync(Tasks.LOCATION);
     }
+  });
+
+  await Audio.setAudioModeAsync({
+    staysActiveInBackground: true,
   });
 
   await Notifications.setNotificationChannelAsync(
@@ -59,87 +69,91 @@ function BottomTabsComponent() {
 
   return (
     <View style={{ backgroundColor: theme.colors.background, flex: 1 }}>
-      <LocationProvider>
-        <MapProvider>
-          <BottomTabs.Navigator
-            screenOptions={{
-              animation: "shift",
-              header: () => {
-                return <Navbar></Navbar>;
+      <MapProvider>
+        <ArrivalModal></ArrivalModal>
+
+        <BottomTabs.Navigator
+          screenOptions={{
+            animation: "shift",
+            header: () => {
+              return <Navbar></Navbar>;
+            },
+          }}
+          tabBar={({ navigation, state, descriptors, insets }) => (
+            <BottomNavigation.Bar
+              style={{
+                backgroundColor: theme.colors.surface,
+              }}
+              activeIndicatorStyle={{
+                backgroundColor: theme.colors.primary,
+              }}
+              navigationState={state}
+              safeAreaInsets={insets}
+              onTabPress={({ route, preventDefault }) => {
+                const event = navigation.emit({
+                  type: "tabPress",
+                  target: route.key,
+                  canPreventDefault: true,
+                });
+
+                if (event.defaultPrevented) {
+                  preventDefault();
+                } else {
+                  navigation.dispatch({
+                    ...CommonActions.navigate(route.name, route.params),
+                    target: state.key,
+                  });
+                }
+              }}
+              renderIcon={({ route, focused, color }) => {
+                const { options } = descriptors[route.key];
+                if (options.tabBarIcon) {
+                  return options.tabBarIcon({
+                    focused,
+                    color: focused ? "#ffffff" : theme.colors.onBackground,
+                    size: 22,
+                  });
+                }
+
+                return null;
+              }}
+              getLabelText={({ route }) => {
+                const { options } = descriptors[route.key];
+                return options.tabBarLabel as string;
+              }}
+            />
+          )}
+        >
+          <BottomTabs.Screen
+            name="Map"
+            component={MapScreen}
+            options={{
+              tabBarLabel: "Map",
+              tabBarIcon: ({ color, size }) => {
+                return (
+                  <FontAwesomeIcon
+                    icon={faMapMarkedAlt}
+                    size={size}
+                    color={color}
+                  />
+                );
               },
             }}
-            tabBar={({ navigation, state, descriptors, insets }) => (
-              <BottomNavigation.Bar
-                style={{
-                  backgroundColor: theme.colors.surface,
-                }}
-                activeIndicatorStyle={{
-                  backgroundColor: theme.colors.primary,
-                }}
-                navigationState={state}
-                safeAreaInsets={insets}
-                onTabPress={({ route, preventDefault }) => {
-                  const event = navigation.emit({
-                    type: "tabPress",
-                    target: route.key,
-                    canPreventDefault: true,
-                  });
-
-                  if (event.defaultPrevented) {
-                    preventDefault();
-                  } else {
-                    navigation.dispatch({
-                      ...CommonActions.navigate(route.name, route.params),
-                      target: state.key,
-                    });
-                  }
-                }}
-                renderIcon={({ route, focused, color }) => {
-                  const { options } = descriptors[route.key];
-                  if (options.tabBarIcon) {
-                    return options.tabBarIcon({ focused, color, size: 22 });
-                  }
-
-                  return null;
-                }}
-                getLabelText={({ route }) => {
-                  const { options } = descriptors[route.key];
-                  return options.tabBarLabel as string;
-                }}
-              />
-            )}
-          >
-            <BottomTabs.Screen
-              name="Map"
-              component={MapScreen}
-              options={{
-                tabBarLabel: "Map",
-                tabBarIcon: ({ color, size }) => {
-                  return (
-                    <FontAwesomeIcon
-                      icon={faMapMarkedAlt}
-                      size={size}
-                      color={color}
-                    />
-                  );
-                },
-              }}
-            />
-            <BottomTabs.Screen
-              name="Settings"
-              component={SettingsScreen}
-              options={{
-                tabBarLabel: "Settings",
-                tabBarIcon: ({ color, size }) => {
-                  return (
-                    <FontAwesomeIcon icon={faGear} size={size} color={color} />
-                  );
-                },
-              }}
-            />
-          </BottomTabs.Navigator>
-        </MapProvider>
-      </LocationProvider>
+          />
+          <BottomTabs.Screen
+            name="Settings"
+            component={SettingsScreen}
+            options={{
+              tabBarLabel: "Settings",
+              tabBarIcon: ({ color, size }) => {
+                return (
+                  <FontAwesomeIcon icon={faGear} size={size} color={color} />
+                );
+              },
+            }}
+          />
+        </BottomTabs.Navigator>
+      </MapProvider>
     </View>
   );
 }
@@ -166,12 +180,20 @@ function RootNativeStackComponent() {
         component={BackgroundLocationPermissionScreen}
       ></RootNativeStack.Screen>
       <RootNativeStack.Screen
+        name="EnableLocationServices"
+        component={EnableLocationServicesScreen}
+      ></RootNativeStack.Screen>
+      <RootNativeStack.Screen
         name="IgnoreBatteryOptimizationsPermission"
         component={IgnoreBatteryOptimizationsPermissionScreen}
       ></RootNativeStack.Screen>
       <RootNativeStack.Screen
         name="NotificationsPermission"
         component={NotificationsPermissionScreen}
+      ></RootNativeStack.Screen>
+      <RootNativeStack.Screen
+        name="VolumeConfig"
+        component={VolumeConfigScreen}
       ></RootNativeStack.Screen>
       <RootNativeStack.Screen
         name="Home"

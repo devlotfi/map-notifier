@@ -13,19 +13,24 @@ import { useMutation } from "@tanstack/react-query";
 
 type Props = NativeStackScreenProps<
   RootNativeStackParamList,
-  "ForegroundLocationPermission"
+  "EnableLocationServices"
 >;
 
-export default function ForegroundLocationPermissionScreen() {
+export default function EnableLocationServicesScreen() {
   const theme = useTheme();
   const navigation = useNavigation<Props["navigation"]>();
 
   const { mutate, isPending } = useMutation({
     mutationFn: async () => {
-      const { status: foregroundStatus } =
-        await Location.requestForegroundPermissionsAsync();
-      if (foregroundStatus === "granted") {
-        navigation.navigate("BackgroundLocationPermission");
+      let enabled = await Location.hasServicesEnabledAsync();
+      if (enabled) {
+        navigation.navigate("IgnoreBatteryOptimizationsPermission");
+      } else {
+        await Location.getCurrentPositionAsync();
+        enabled = await Location.hasServicesEnabledAsync();
+        if (enabled) {
+          navigation.navigate("IgnoreBatteryOptimizationsPermission");
+        }
       }
     },
   });
@@ -44,7 +49,7 @@ export default function ForegroundLocationPermissionScreen() {
           }}
         >
           <Image
-            source={require("../assets/img/foreground-location.png")}
+            source={require("../assets/img/location-services.png")}
             contentFit="contain"
             style={{ height: 230, width: 230 }}
           ></Image>
@@ -59,7 +64,7 @@ export default function ForegroundLocationPermissionScreen() {
               fontWeight: "bold",
             }}
           >
-            Foreground location
+            Enable location services
           </Text>
           <Text
             style={{
@@ -69,7 +74,7 @@ export default function ForegroundLocationPermissionScreen() {
               fontSize: 20,
             }}
           >
-            Allow access to location when using the app
+            Turn on location services
           </Text>
         </View>
       </ContentGradient>

@@ -2,7 +2,10 @@ import { View } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import Navbar from "../components/navbar";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  faAngleDoubleRight,
+  faMapMarkerAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import { Image } from "expo-image";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootNativeStackParamList } from "../types/navigation-types";
@@ -10,7 +13,6 @@ import { useNavigation } from "@react-navigation/native";
 import ContentGradient from "../layout/content-gradient";
 import { useMutation } from "@tanstack/react-query";
 import * as Location from "expo-location";
-import { Tasks } from "../types/tasks";
 
 type Props = NativeStackScreenProps<
   RootNativeStackParamList,
@@ -26,8 +28,7 @@ export default function BackgroundLocationPermissionScreen() {
       const { status: backgroundStatus } =
         await Location.requestBackgroundPermissionsAsync();
       if (backgroundStatus === "granted") {
-        await Location.getCurrentPositionAsync();
-        navigation.navigate("IgnoreBatteryOptimizationsPermission");
+        navigation.navigate("EnableLocationServices");
       }
     },
   });
@@ -99,10 +100,10 @@ export default function BackgroundLocationPermissionScreen() {
             ></FontAwesomeIcon>
           )}
           loading={isPending}
-          contentStyle={{ padding: 7 }}
+          contentStyle={{ padding: 7, flexDirection: "row-reverse" }}
           onPress={() => mutate()}
         >
-          Start
+          Enable
         </Button>
       </View>
     </View>

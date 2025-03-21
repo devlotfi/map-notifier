@@ -2,36 +2,23 @@ import { View } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import Navbar from "../components/navbar";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
+import { faAngleDoubleRight, faBell } from "@fortawesome/free-solid-svg-icons";
 import { Image } from "expo-image";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootNativeStackParamList } from "../types/navigation-types";
 import { useNavigation } from "@react-navigation/native";
 import ContentGradient from "../layout/content-gradient";
-import * as Location from "expo-location";
-import { useMutation } from "@tanstack/react-query";
 
-type Props = NativeStackScreenProps<
-  RootNativeStackParamList,
-  "ForegroundLocationPermission"
->;
+type Props = NativeStackScreenProps<RootNativeStackParamList, "VolumeConfig">;
 
-export default function ForegroundLocationPermissionScreen() {
+export default function VolumeConfigScreen() {
   const theme = useTheme();
   const navigation = useNavigation<Props["navigation"]>();
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: async () => {
-      const { status: foregroundStatus } =
-        await Location.requestForegroundPermissionsAsync();
-      if (foregroundStatus === "granted") {
-        navigation.navigate("BackgroundLocationPermission");
-      }
-    },
-  });
-
   return (
-    <View style={{ backgroundColor: theme.colors.background, flex: 1 }}>
+    <View
+      style={{ backgroundColor: theme.colors.background, flex: 1, zIndex: 10 }}
+    >
       <Navbar></Navbar>
 
       <ContentGradient>
@@ -44,9 +31,9 @@ export default function ForegroundLocationPermissionScreen() {
           }}
         >
           <Image
-            source={require("../assets/img/foreground-location.png")}
+            source={require("../assets/img/volume-config.png")}
             contentFit="contain"
-            style={{ height: 230, width: 230 }}
+            style={{ height: 280, width: 280 }}
           ></Image>
 
           <Text
@@ -55,21 +42,22 @@ export default function ForegroundLocationPermissionScreen() {
               maxWidth: 300,
               textAlign: "center",
               fontSize: 25,
-              color: theme.colors.primary,
               fontWeight: "bold",
+              color: theme.colors.primary,
             }}
           >
-            Foreground location
+            Adjust volume
           </Text>
           <Text
             style={{
-              height: 50,
+              height: 70,
               maxWidth: 300,
               textAlign: "center",
-              fontSize: 20,
+              fontSize: 18,
             }}
           >
-            Allow access to location when using the app
+            This app relies on the media volume to emit the alarm sound, make
+            sure you set it to your desired level
           </Text>
         </View>
       </ContentGradient>
@@ -79,16 +67,15 @@ export default function ForegroundLocationPermissionScreen() {
           mode="contained"
           icon={({ color, size }) => (
             <FontAwesomeIcon
-              icon={faMapMarkerAlt}
+              icon={faAngleDoubleRight}
               color={color}
               size={size}
             ></FontAwesomeIcon>
           )}
-          loading={isPending}
           contentStyle={{ padding: 7, flexDirection: "row-reverse" }}
-          onPress={() => mutate()}
+          onPress={() => navigation.navigate("Home")}
         >
-          Enable
+          Finish configuration
         </Button>
       </View>
     </View>

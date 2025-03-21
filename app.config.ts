@@ -34,6 +34,21 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     favicon: "./icons/favicon.png",
   },
   plugins: [
+    [
+      "expo-splash-screen",
+      {
+        backgroundColor: "#ffffff",
+        image: "./icons/splash-icon.png",
+        resizeMode: "contain",
+        imageWidth: 200,
+        dark: {
+          image: "./icons/splash-icon.png",
+          backgroundColor: "#222D46",
+          resizeMode: "contain",
+          imageWidth: 200,
+        },
+      },
+    ],
     "@maplibre/maplibre-react-native",
     "expo-av",
     "expo-notifications",

@@ -50,6 +50,7 @@ export default function MapTypeComponent({ actionMapType }: Props) {
               mapType === actionMapType
                 ? theme.colors.primary
                 : theme.colors.onBackground,
+            fontWeight: mapType === actionMapType ? "bold" : "regular",
           }}
         >
           {actionMapType === MapType.SATELLITE ? "Satellite" : "Streets"}

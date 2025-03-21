@@ -19,37 +19,20 @@ export default function Crosshair() {
     >
       <View
         style={{
-          height: 100,
-          width: 100,
+          height: 50,
+          width: 50,
           borderColor: theme.colors.onBackground,
           borderWidth: 1,
           borderRadius: 1000,
           position: "absolute",
         }}
       ></View>
-      <View
-        style={{
-          height: 150,
-          width: 2,
-          backgroundColor: theme.colors.onBackground,
-          borderRadius: 1000,
-          position: "absolute",
-        }}
-      ></View>
-      <View
-        style={{
-          height: 2,
-          width: 150,
-          backgroundColor: theme.colors.onBackground,
-          borderRadius: 1000,
-          position: "absolute",
-        }}
-      ></View>
+
       <View
         style={{
           height: 10,
           width: 10,
-          backgroundColor: theme.colors.onBackground,
+          backgroundColor: theme.colors.primary,
           borderRadius: 1000,
           position: "absolute",
         }}

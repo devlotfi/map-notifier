@@ -2,7 +2,7 @@ import { View } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import Navbar from "../components/navbar";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
+import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { Image } from "expo-image";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootNativeStackParamList } from "../types/navigation-types";
@@ -24,7 +24,7 @@ export default function NotificationsPermissionScreen() {
     mutationFn: async () => {
       let result = await Notifications.requestPermissionsAsync();
       if (result.granted) {
-        navigation.navigate("Home");
+        navigation.navigate("VolumeConfig");
       }
     },
   });
@@ -81,16 +81,16 @@ export default function NotificationsPermissionScreen() {
           mode="contained"
           icon={({ color, size }) => (
             <FontAwesomeIcon
-              icon={faMapMarkerAlt}
+              icon={faBell}
               color={color}
               size={size}
             ></FontAwesomeIcon>
           )}
-          contentStyle={{ padding: 7 }}
+          contentStyle={{ padding: 7, flexDirection: "row-reverse" }}
           loading={isPending}
           onPress={() => mutate()}
         >
-          Start
+          Allow
         </Button>
       </View>
     </View>
