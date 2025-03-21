@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/devlotfi/map-notifier/main/github-assets/github-banner.png">
+<img src="https://raw.githubusercontent.com/devlotfi/map-notifier/master/github-assets/github-banner.png">
 
 # 📜 aspnet-chat
 
@@ -55,6 +55,6 @@ $ dotnet watch
 
 # 📷 Preview
 
-<img src="https://raw.githubusercontent.com/devlotfi/map-notifier/main/github-assets/preview/preview-1.png">
-<img src="https://raw.githubusercontent.com/devlotfi/map-notifier/main/github-assets/preview/preview-2.png">
-<img src="https://raw.githubusercontent.com/devlotfi/map-notifier/main/github-assets/preview/preview-3.png">
+<img src="https://raw.githubusercontent.com/devlotfi/map-notifier/master/github-assets/preview-1.png">
+<img src="https://raw.githubusercontent.com/devlotfi/map-notifier/master/github-assets/preview-2.png">
+<img src="https://raw.githubusercontent.com/devlotfi/map-notifier/master/github-assets/preview-3.png">
