@@ -19,7 +19,6 @@ An app that will trigger an alarm when reaching a user defined geographical area
   <img height="50px" src="https://devlotfi.github.io/stack-icons/icons/fontawesome.svg">
   <img height="50px" src="https://devlotfi.github.io/stack-icons/icons/react-native-paper.svg">
   <img height="50px" src="https://devlotfi.github.io/stack-icons/icons/reactnavigation.svg">
-  <img height="50px" src="https://devlotfi.github.io/stack-icons/icons/tanstack-query.svg">
   <img height="50px" src="https://devlotfi.github.io/stack-icons/icons/maplibre.svg">
   <img height="50px" src="https://devlotfi.github.io/stack-icons/icons/maptiler.svg">
 </p>
